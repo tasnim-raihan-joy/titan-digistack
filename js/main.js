@@ -591,6 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
   Object.keys(CATEGORY_LABELS).forEach(renderGrid);
 
   initStickyHeader();
+  initThemeToggle();
   initCategoryTabs();
   initScrollReveal();
   initMobileNav();
@@ -600,3 +601,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // Notify other modules products are rendered
   document.dispatchEvent(new CustomEvent('titan:products-rendered'));
 });
+
+/* -----------------------------
+   Theme Toggle (Dark/Light Mode)
+   ----------------------------- */
+function initThemeToggle() {
+  const toggles = $$('#themeToggle, .theme-toggle');
+  if (!toggles.length) return;
+
+  function updateUI() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    toggles.forEach(t => {
+      const label = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+      t.setAttribute('aria-label', label);
+      t.setAttribute('title', label);
+    });
+  }
+
+  function toggle() {
+    const current = document.documentElement.getAttribute('data-theme');
+    const target = current === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', target);
+    try { localStorage.setItem('titan_theme', target); } catch {}
+    updateUI();
+  }
+
+  toggles.forEach(t => t.addEventListener('click', toggle));
+  updateUI();
+}

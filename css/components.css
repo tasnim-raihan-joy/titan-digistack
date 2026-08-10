@@ -64,6 +64,13 @@
 }
 .icon-btn svg { width: 20px; height: 20px; }
 
+/* ---------- Theme Toggle Icon Visibility ---------- */
+.theme-toggle .theme-icon { transition: transform 0.3s ease, opacity 0.3s ease; }
+[data-theme="light"] .theme-icon--sun { display: block; color: #f59e0b; }
+[data-theme="light"] .theme-icon--moon { display: none; }
+:root:not([data-theme="light"]) .theme-icon--sun { display: none; }
+:root:not([data-theme="light"]) .theme-icon--moon { display: block; color: var(--color-accent-primary); }
+
 .cart-btn .cart-badge {
   position: absolute;
   top: -4px; right: -4px;
@@ -672,7 +679,7 @@
   left: 0;
   right: 0;
   z-index: 90;
-  background: rgba(8, 9, 13, 0.94);
+  background: var(--color-bg-primary);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--color-border);
