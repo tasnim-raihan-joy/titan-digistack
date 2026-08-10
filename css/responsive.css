@@ -1,0 +1,80 @@
+/* ============================================================
+   Titan DigiStack — responsive.css
+   Mobile-first breakpoints: 480, 640, 768, 1024, 1280
+   ============================================================ */
+
+/* ≥ 480px — small phones landscape */
+@media (min-width: 480px) {
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+  .why__grid    { grid-template-columns: repeat(2, 1fr); }
+  .hero__cards  { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ≥ 640px — large phones / small tablets */
+@media (min-width: 640px) {
+  .countdown { gap: 14px; }
+  .why__grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ≥ 768px — tablet */
+@media (min-width: 768px) {
+  .top-bar__inner { padding-block: 6px; }
+  .product-grid   { grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .hero__inner    { grid-template-columns: 1.1fr 0.9fr; gap: 3rem; }
+  .hero__cards    { grid-template-columns: 1fr; }
+  .hero__cards    .offer-card--featured { transform: translateY(-4px); }
+  .offer-banner__inner { grid-template-columns: 1.2fr 1fr; }
+  .newsletter__inner   { grid-template-columns: 1.1fr 0.9fr; gap: 2rem; }
+  .site-footer__grid   { grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 2.5rem; }
+}
+
+/* ≥ 1024px — small laptop */
+@media (min-width: 1024px) {
+  .product-grid { grid-template-columns: repeat(4, 1fr); }
+  .why__grid    { grid-template-columns: repeat(6, 1fr); }
+  .hero__cards  { grid-template-columns: 1fr; }
+}
+
+/* ≥ 1280px — desktop */
+@media (min-width: 1280px) {
+  .product-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+/* Mobile-only: touch optimizations, collapse search, show hamburger */
+@media (max-width: 767px) {
+  .site-header__inner { grid-template-columns: auto 1fr auto; gap: 8px; }
+  .search { max-width: none; }
+  .search input { font-size: 0.95rem; min-height: 44px; }
+  .header-actions .icon-btn:not(.hamburger):not(.cart-btn) { display: none; }
+  
+  .cat-tab {
+    min-height: 44px;
+    padding: 10px 18px;
+    display: inline-flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .mobile-nav nav a {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn {
+    min-height: 44px;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Tablet+: hide hamburger */
+@media (min-width: 768px) {
+  .hamburger { display: none; }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+  .top-bar__meta { display: none; }
+  .countdown__cell { padding: 10px 6px; }
+}
