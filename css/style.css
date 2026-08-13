@@ -4,28 +4,35 @@
    ============================================================ */
 
 :root {
-  /* Color tokens — Vibrant Slate Tech (Brightened & High-Contrast) */
-  --color-bg-primary:     #0f1420;
-  --color-bg-secondary:   #171e2e;
-  --color-bg-card:        #1f283d;
-  --color-bg-surface:     #28344e;
+  /* Color tokens — Aqua Sky Teal (#77D3E5), Rose Flamingo (#E5779C), Warm Gold (#E5C077) */
+  --color-bg-primary:     #0e151e;
+  --color-bg-secondary:   #141d28;
+  --color-bg-card:        #1a2533;
+  --color-bg-surface:     #223042;
   
-  --color-accent-primary: #00f0ff;
-  --color-accent-hover:   #33f3ff;
-  --color-accent-glow:    rgba(0, 240, 255, 0.25);
+  --color-accent-primary:   #77D3E5;
+  --color-accent-hover:     #94e2f2;
+  --color-accent-glow:      rgba(119, 211, 229, 0.25);
   
+  --color-accent-secondary: #E5779C;
+  --color-accent-sec-hover: #ef8eb0;
+  --color-accent-sec-glow:  rgba(229, 119, 156, 0.25);
+
+  --color-accent-tertiary:  #E5C077;
+  --color-accent-tert-glow: rgba(229, 192, 119, 0.25);
+
   --color-text-primary:   #ffffff;
-  --color-text-secondary: #cbd5e1;
-  --color-text-muted:     #94a3b8;
+  --color-text-secondary: #cce1e8;
+  --color-text-muted:     #8ba4b3;
   
-  --color-border:         rgba(255, 255, 255, 0.16);
-  --color-border-subtle:  rgba(255, 255, 255, 0.10);
-  --color-border-hover:   rgba(0, 240, 255, 0.50);
+  --color-border:         rgba(119, 211, 229, 0.16);
+  --color-border-subtle:  rgba(255, 255, 255, 0.08);
+  --color-border-hover:   rgba(119, 211, 229, 0.50);
   
-  --color-price:          #00ff88;
-  --color-badge-new:      #00f0ff;
-  --color-badge-sale:     #ff5252;
-  --color-badge-free:     #00ff88;
+  --color-price:          #E5C077;
+  --color-badge-new:      #77D3E5;
+  --color-badge-sale:     #E5779C;
+  --color-badge-free:     #77D3E5;
 
   /* Typography — Cohesive 2-font system */
   --font-primary: 'Inter', system-ui, sans-serif;
@@ -42,8 +49,8 @@
   --transition-fast:  0.15s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-speed: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   
-  --shadow-card:      0 8px 32px rgba(0, 0, 0, 0.35);
-  --shadow-elev:      0 20px 60px rgba(0, 0, 0, 0.50);
+  --shadow-card:      0 8px 32px rgba(0, 0, 0, 0.40);
+  --shadow-elev:      0 20px 60px rgba(0, 0, 0, 0.60);
   --shadow-glow:      0 0 24px var(--color-accent-glow);
 
   /* Layout */
@@ -54,24 +61,34 @@
 
 /* Light theme overrides */
 [data-theme="light"] {
-  --color-bg-primary:     #f8fafc;
-  --color-bg-secondary:   #f1f5f9;
+  --color-bg-primary:     #f4f8fa;
+  --color-bg-secondary:   #eaf2f5;
   --color-bg-card:        #ffffff;
-  --color-bg-surface:     #e2e8f0;
+  --color-bg-surface:     #dcebf0;
   
-  --color-accent-primary: #0066ff;
-  --color-accent-hover:   #0052cc;
-  --color-accent-glow:    rgba(0, 102, 255, 0.20);
+  --color-accent-primary:   #188a9e;
+  --color-accent-hover:     #126d7d;
+  --color-accent-glow:      rgba(24, 138, 158, 0.20);
   
-  --color-text-primary:   #090d16;
-  --color-text-secondary: #334155;
-  --color-text-muted:     #64748b;
+  --color-accent-secondary: #c4466f;
+  --color-accent-sec-hover: #a33256;
+  --color-accent-sec-glow:  rgba(196, 70, 111, 0.20);
+
+  --color-accent-tertiary:  #b88825;
+  --color-accent-tert-glow: rgba(184, 136, 37, 0.20);
+
+  --color-text-primary:   #0b151a;
+  --color-text-secondary: #2d414a;
+  --color-text-muted:     #5d7682;
   
-  --color-border:         rgba(0, 0, 0, 0.14);
+  --color-border:         rgba(24, 138, 158, 0.15);
   --color-border-subtle:  rgba(0, 0, 0, 0.08);
-  --color-border-hover:   rgba(0, 102, 255, 0.50);
+  --color-border-hover:   rgba(24, 138, 158, 0.45);
   
-  --color-price:          #008844;
+  --color-price:          #b88825;
+  --color-badge-new:      #188a9e;
+  --color-badge-sale:     #c4466f;
+  --color-badge-free:     #188a9e;
   
   --shadow-card:      0 8px 30px rgba(0, 0, 0, 0.08);
   --shadow-elev:      0 20px 50px rgba(0, 0, 0, 0.14);
