@@ -1,7 +1,7 @@
 /* ============================================================
    Titan DigiStack — cart.js
    Cart state, localStorage persistence, header badge, add/remove.
-   Exposes window.TitanCart for cart.html to render line items.
+   Toast notifications, tactile bounce feedback, WhatsApp checkout.
    ============================================================ */
 
 (function () {
@@ -44,11 +44,43 @@
       .filter(p => p.title);
   }
 
+  function showToast(product) {
+    let toast = document.getElementById('cartToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'cartToast';
+      toast.className = 'cart-toast';
+      toast.innerHTML = `
+        <div class="cart-toast__icon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        </div>
+        <div class="cart-toast__content">
+          <h4 id="cartToastTitle">Added to Stack</h4>
+          <p id="cartToastSubtitle">Instant digital delivery ready</p>
+        </div>
+      `;
+      document.body.appendChild(toast);
+    }
+
+    const titleEl = document.getElementById('cartToastTitle');
+    const subEl = document.getElementById('cartToastSubtitle');
+    if (titleEl && product) titleEl.textContent = `Added: ${product.title}`;
+    if (subEl && product) subEl.textContent = `Cart subtotal: ৳${totalAmount().toLocaleString('en-BD')}`;
+
+    toast.classList.add('is-visible');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.classList.remove('is-visible');
+    }, 3200);
+  }
+
   function add(id) {
     const p = getProduct(id);
     if (!p || p.price === null) return false;
     state[id] = (state[id] || 0) + 1;
-    save(); render();
+    save(); 
+    render();
+    showToast(p);
     return true;
   }
 
@@ -76,7 +108,7 @@
       if (badge) {
         badge.textContent = String(count);
         badge.classList.add('is-bumped');
-        setTimeout(() => badge.classList.remove('is-bumped'), 250);
+        setTimeout(() => badge.classList.remove('is-bumped'), 300);
       }
     });
     document.dispatchEvent(new CustomEvent('titan:cart-changed', {
@@ -91,11 +123,12 @@
     const id = btn.dataset.id;
     if (add(id)) {
       btn.classList.add('is-added');
+      const originalText = btn.textContent;
       btn.textContent = 'Added ✓';
       setTimeout(() => {
         btn.classList.remove('is-added');
-        btn.textContent = 'Add to Cart';
-      }, 1400);
+        btn.textContent = originalText;
+      }, 1500);
     }
   });
 
@@ -125,8 +158,8 @@
       list.innerHTML = `
         <div class="cart-empty">
           <h3>Your cart is empty.</h3>
-          <p>Browse the storefront and add products to get started.</p>
-          <a href="../index.html" class="btn btn--primary" style="margin-top:14px;">Continue Shopping</a>
+          <p>Browse our verified digital tool stack and add items to get started.</p>
+          <a href="../index.html" class="btn btn--primary" style="margin-top:16px;">Explore Storefront</a>
         </div>`;
       summary.innerHTML = `<dl><dt>Items</dt><dd>0</dd><dt>Subtotal</dt><dd>৳0</dd></dl>
         <dl class="cart-total"><dt>Total</dt><dd>৳0</dd></dl>`;
@@ -174,7 +207,7 @@
       <dl>
         <dt>Items</dt><dd>${itemsCount}</dd>
         <dt>Subtotal</dt><dd>${fmtBDT(subtotal)}</dd>
-        <dt>Delivery</dt><dd>Instant · Digital</dd>
+        <dt>Delivery</dt><dd style="color:var(--color-accent-emerald);font-weight:600;">Instant Digital Key</dd>
       </dl>
       <dl class="cart-total"><dt>Total</dt><dd>${fmtBDT(subtotal)}</dd></dl>`;
 
@@ -182,7 +215,6 @@
     if (checkout) checkout.removeAttribute('aria-disabled');
   }
 
-  // Wire qty controls + remove on the cart page (delegation)
   document.addEventListener('click', (e) => {
     const row = e.target.closest('.cart-row');
     if (!row) return;
@@ -221,7 +253,6 @@
 
   document.addEventListener('titan:cart-changed', renderCartPage);
   document.addEventListener('DOMContentLoaded', renderCartPage);
-  /* ----------------------------------------------------- */
 
   window.TitanCart = { add, remove, setQty, clear, items, totalCount, totalAmount };
 })();

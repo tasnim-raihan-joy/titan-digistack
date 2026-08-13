@@ -1,9 +1,11 @@
 /* ============================================================
    Titan DigiStack — main.js
    - Product catalog (single source of truth)
-   - Grid rendering per category
-   - Tab interactions, sticky header shadow
-   - Scroll reveal, mobile nav, footer year
+   - 3D Tilt & Specular Glare Gesture Engine
+   - Floating Capsule Sliding Indicator Physics
+   - Dynamic Colorway Switcher & Ambient Aura
+   - Quick-Preview Drawer & Modal
+   - Grid rendering per category, tabs, sticky header, shop filters
    ============================================================ */
 
 /* -----------------------------
@@ -16,10 +18,7 @@ window.TITAN_CONFIG = {
 };
 
 /* -----------------------------
-   Catalog
-   - Each item: { id, title, price, currency, badge?, category, image? }
-   - price === null (or 'call') => "Call for Price"
-   - All prices are BDT (৳) per the spec.
+   Catalog (129 verified products)
    ----------------------------- */
 const PRODUCTS = [
   /* ----- WordPress Themes ----- */
@@ -188,49 +187,22 @@ window.CATEGORY_LABELS = CATEGORY_LABELS;
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-/**
- * Resolve asset paths so they work from any depth.
- * - index.html              → 'assets/products/...'
- * - pages/shop.html         → '../assets/products/...'
- * Exposed on window so cart.js can use the same logic.
- */
 function assetBase() {
   return window.location.pathname.includes('/pages/') ? '../' : '';
 }
 window.assetBase = assetBase;
 
-/**
- * Extension fallback chain: png → jpg → webp
- * Exposed on window so the onerror inline handler can reach it.
- */
 window.IMAGE_EXTS = ['png', 'jpg', 'webp'];
 
 window.tryNextImageExt = function (img) {
   const base = img.dataset.imgBase;
   if (!base) { img.remove(); return; }
-  const idx = (parseInt(img.dataset.extIdx || '0', 10)) + 1;   // next index
-  if (idx >= window.IMAGE_EXTS.length) { img.remove(); return; } // all tried → show placeholder
+  const idx = (parseInt(img.dataset.extIdx || '0', 10)) + 1;
+  if (idx >= window.IMAGE_EXTS.length) { img.remove(); return; }
   img.dataset.extIdx = idx;
   img.src = `${base}.${window.IMAGE_EXTS[idx]}`;
 };
 
-/**
- * Returns image config for a product:
- *   { base, src, chain } | null
- *
- *   base  — path WITHOUT extension (used for fallback src swaps)
- *   src   — initial src to set on the <img>
- *   chain — true = use tryNextImageExt on error; false = single-shot (explicit URL)
- *
- * Convention (no product.image set):
- *   Tries assets/products/<id>.png → .jpg → .webp automatically.
- *
- * Override per product in main.js PRODUCTS array:
- *   image: 'assets/products/astra-pro.jpg'  — custom path (single-shot, no chain)
- *   image: 'https://cdn.example.com/x.png' — external URL (single-shot)
- *   image: false                             — force placeholder
- *   imageFit: 'contain'                      — logo/centered fit instead of cover
- */
 function imageConfigFor(product) {
   if (product.image === false) return null;
 
@@ -238,8 +210,6 @@ function imageConfigFor(product) {
     const src = (product.image.startsWith('http') || product.image.startsWith('/'))
       ? product.image
       : assetBase() + product.image;
-    // Strip known extension to get base — won't match for external CDN URLs that
-    // have no extension, so we fall back to using the full URL as the base.
     const base = src.replace(/\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i, '');
     return { base, src, chain: false };
   }
@@ -248,8 +218,6 @@ function imageConfigFor(product) {
   return { base, src: `${base}.${window.IMAGE_EXTS[0]}`, chain: true };
 }
 window.imageConfigFor = imageConfigFor;
-
-// Backward-compat alias used by cart.js (returns just the initial src string)
 window.defaultImageFor = (p) => { const c = imageConfigFor(p); return c ? c.src : null; };
 
 function formatPrice(p) {
@@ -265,13 +233,12 @@ function priceLabel(product) {
   return lo;
 }
 
-/* Generate a deterministic placeholder gradient pair from product id. */
 function placeholderColors(id) {
   let h = 0;
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
   const hue1 = h % 360;
-  const hue2 = (hue1 + 40) % 360;
-  return [`hsl(${hue1} 60% 22%)`, `hsl(${hue2} 70% 12%)`];
+  const hue2 = (hue1 + 45) % 360;
+  return [`hsl(${hue1} 75% 24%)`, `hsl(${hue2} 80% 12%)`];
 }
 
 function placeholderInitials(title) {
@@ -281,12 +248,12 @@ function placeholderInitials(title) {
 
 function callForPriceHref(product) {
   const cfg = window.TITAN_CONFIG;
-  const text = encodeURIComponent(`Hi Titan DigiStack, I'd like a price quote for "${product.title}".`);
+  const text = encodeURIComponent(`Hi Titan DigiStack, I'd like a quote for "${product.title}" (ID: ${product.id}).`);
   return `https://wa.me/${cfg.whatsappNumber}?text=${text}`;
 }
 
 /* -----------------------------
-   Product card render
+   Product card render with 3D Tilt & Quick-View
    ----------------------------- */
 function renderCard(product) {
   const isCall = product.price === null;
@@ -329,6 +296,9 @@ function renderCard(product) {
         <div class="placeholder" aria-hidden="true">${placeholderInitials(product.title)}</div>
         ${photoHtml}
         ${badgeHtml}
+        <div class="card-quick-overlay">
+          <button class="btn-quick-preview" type="button" data-quick-view="${product.id}" aria-label="Quick view ${product.title}">Quick View</button>
+        </div>
       </div>
       <div class="card-body">
         <span class="card-cat">${CATEGORY_LABELS[product.category] || ''}</span>
@@ -346,23 +316,127 @@ function renderGrid(category) {
   grid.innerHTML = items.map(renderCard).join('');
 }
 
-/* -----------------------------
-   Sticky header shadow
-   ----------------------------- */
-function initStickyHeader() {
-  const header = $('#siteHeader');
-  if (!header) return;
-  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 60);
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
+/* ============================================================
+   3D Tilt & Specular Glare Gesture Engine
+   ============================================================ */
+function initTiltGestures() {
+  if (window.matchMedia('(hover: none)').matches) return;
+
+  const cards = $$('.product-card, .hero-preview-card, .why__item');
+  
+  cards.forEach(card => {
+    let ticking = false;
+
+    const onMove = (e) => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+
+          // Limit tilt range for sleek professional feel
+          const tiltX = (0.5 - y) * 14;
+          const tiltY = (x - 0.5) * 14;
+
+          card.style.transform = `perspective(1000px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+          card.style.setProperty('--glare-x', `${(x * 100).toFixed(1)}%`);
+          card.style.setProperty('--glare-y', `${(y * 100).toFixed(1)}%`);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    const onLeave = () => {
+      card.style.transform = '';
+      card.style.setProperty('--glare-x', '50%');
+      card.style.setProperty('--glare-y', '50%');
+    };
+
+    card.addEventListener('pointermove', onMove, { passive: true });
+    card.addEventListener('pointerleave', onLeave);
+  });
 }
 
-/* -----------------------------
-   Category tabs
-   ----------------------------- */
+/* ============================================================
+   Magnetic Button Gesture
+   ============================================================ */
+function initMagneticButtons() {
+  if (window.matchMedia('(hover: none)').matches) return;
+
+  const magneticBtns = $$('.btn--primary, .brand, .site-header .icon-btn');
+  
+  magneticBtns.forEach(btn => {
+    btn.addEventListener('pointermove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) * 0.22;
+      const y = (e.clientY - rect.top - rect.height / 2) * 0.22;
+      btn.style.transform = `translate(${x}px, ${y}px)`;
+    }, { passive: true });
+
+    btn.addEventListener('pointerleave', () => {
+      btn.style.transform = '';
+    });
+  });
+}
+
+/* ============================================================
+   Ambient Cursor Aura Light (Follows Pointer)
+   ============================================================ */
+function initCursorAura() {
+  if (window.matchMedia('(hover: none)').matches) return;
+
+  let aura = $('.cursor-aura');
+  if (!aura) {
+    aura = document.createElement('div');
+    aura.className = 'cursor-aura';
+    document.body.appendChild(aura);
+  }
+
+  let raf = null;
+  window.addEventListener('pointermove', (e) => {
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      aura.style.left = `${e.clientX}px`;
+      aura.style.top = `${e.clientY}px`;
+    });
+  }, { passive: true });
+}
+
+/* ============================================================
+   Floating Capsule Dock (Category Tabs with Gliding Pill)
+   ============================================================ */
 function initCategoryTabs() {
   const tabs = $$('.cat-tab');
-  if (!tabs.length) return;
+  const inner = $('.cat-tabs__inner');
+  if (!tabs.length || !inner) return;
+
+  let indicator = $('.cat-tab-indicator', inner);
+  if (!indicator) {
+    indicator = document.createElement('div');
+    indicator.className = 'cat-tab-indicator';
+    inner.insertBefore(indicator, inner.firstChild);
+  }
+
+  const updateIndicator = (activeTab) => {
+    if (!activeTab || !indicator) return;
+    const tabRect = activeTab.getBoundingClientRect();
+    const innerRect = inner.getBoundingClientRect();
+    const left = tabRect.left - innerRect.left + inner.scrollLeft;
+    indicator.style.left = `${left}px`;
+    indicator.style.width = `${tabRect.width}px`;
+  };
+
+  const activeTab = $('.cat-tab.is-active', inner) || tabs[0];
+  if (activeTab) updateIndicator(activeTab);
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      tabs.forEach(t => t.classList.remove('is-active'));
+      tab.classList.add('is-active');
+      updateIndicator(tab);
+    });
+  });
 
   const sections = tabs
     .map(t => t.getAttribute('href'))
@@ -370,26 +444,178 @@ function initCategoryTabs() {
     .map(h => document.getElementById(h.slice(1)))
     .filter(Boolean);
 
-  // Click → active state
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('is-active'));
-      tab.classList.add('is-active');
-    });
-  });
-
-  // Scroll-spy to highlight current tab
   if ('IntersectionObserver' in window && sections.length) {
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
           const id = '#' + e.target.id;
-          tabs.forEach(t => t.classList.toggle('is-active', t.getAttribute('href') === id));
+          const currentTab = tabs.find(t => t.getAttribute('href') === id);
+          if (currentTab) {
+            tabs.forEach(t => t.classList.remove('is-active'));
+            currentTab.classList.add('is-active');
+            updateIndicator(currentTab);
+          }
         }
       });
-    }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+    }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
     sections.forEach(s => io.observe(s));
   }
+
+  window.addEventListener('resize', () => {
+    const active = $('.cat-tab.is-active', inner);
+    if (active) updateIndicator(active);
+  }, { passive: true });
+}
+
+/* ============================================================
+   Quick-Preview Drawer Modal
+   ============================================================ */
+function initQuickPreviewModal() {
+  let modal = $('#quickPreviewModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'quickPreviewModal';
+    modal.className = 'quick-modal-backdrop';
+    modal.setAttribute('aria-hidden', 'true');
+    modal.innerHTML = `
+      <div class="quick-modal-card" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
+        <button class="quick-modal-close" id="quickModalClose" aria-label="Close preview">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18.3 5.71L12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.3 19.71 2.88 18.3 9.17 12 2.88 5.71 4.3 4.29l6.29 6.3 6.3-6.3z"/></svg>
+        </button>
+        <div class="quick-modal__grid">
+          <div class="quick-modal__img" id="quickModalImg">TD</div>
+          <div class="quick-modal__details">
+            <span class="eyebrow" id="quickModalCat">CATEGORY</span>
+            <h2 id="quickModalTitle" style="font-size: 1.35rem; margin-block: 4px 6px;">Product Title</h2>
+            <div id="quickModalPrice" style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--color-price);">৳0.00</div>
+            <div class="quick-modal__features">
+              <div class="quick-modal__feature-item">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg>
+                <span>100% Verified Authentic License</span>
+              </div>
+              <div class="quick-modal__feature-item">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg>
+                <span>Automated Instant Key / Account Dispatch</span>
+              </div>
+              <div class="quick-modal__feature-item">
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg>
+                <span>Lifetime Updates &amp; Direct Setup Support</span>
+              </div>
+            </div>
+            <div id="quickModalActions" style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;"></div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  const closeBtn = $('#quickModalClose', modal);
+  const closeModal = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  closeBtn?.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+  });
+
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-quick-view]');
+    if (!trigger) return;
+    const id = trigger.getAttribute('data-quick-view');
+    const product = PRODUCTS.find(p => p.id === id);
+    if (!product) return;
+
+    // Populate modal
+    $('#quickModalCat', modal).textContent = CATEGORY_LABELS[product.category] || product.category;
+    $('#quickModalTitle', modal).textContent = product.title;
+    $('#quickModalPrice', modal).textContent = priceLabel(product);
+
+    const imgContainer = $('#quickModalImg', modal);
+    const imgCfg = imageConfigFor(product);
+    if (imgCfg) {
+      imgContainer.innerHTML = `<img src="${imgCfg.src}" alt="${product.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.remove()">`;
+    } else {
+      imgContainer.textContent = placeholderInitials(product.title);
+    }
+
+    const actionsContainer = $('#quickModalActions', modal);
+    if (product.price === null) {
+      actionsContainer.innerHTML = `
+        <a class="btn btn--primary btn--block" href="${callForPriceHref(product)}" target="_blank" rel="noopener">
+          WhatsApp Instant Quote
+        </a>
+      `;
+    } else {
+      actionsContainer.innerHTML = `
+        <button class="btn btn--primary" type="button" data-add-to-cart data-id="${product.id}" style="flex: 1;">
+          Add to Cart
+        </button>
+        <a class="btn btn--ghost" href="${callForPriceHref(product)}" target="_blank" rel="noopener" style="flex: 1;">
+          Buy via WhatsApp
+        </a>
+      `;
+    }
+
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  });
+}
+
+/* ============================================================
+   Colorway Theme Switcher Engine
+   ============================================================ */
+function initColorwaySwitcher() {
+  const savedColorway = localStorage.getItem('titan_colorway') || 'aurora';
+  document.documentElement.setAttribute('data-colorway', savedColorway);
+
+  // Wire up colorway options
+  document.addEventListener('click', (e) => {
+    const opt = e.target.closest('[data-set-colorway]');
+    if (!opt) return;
+    const colorway = opt.getAttribute('data-set-colorway');
+    document.documentElement.setAttribute('data-colorway', colorway);
+    try { localStorage.setItem('titan_colorway', colorway); } catch {}
+    
+    // Close colorway menu if open
+    const menu = $('#colorwayMenu');
+    if (menu) menu.hidden = true;
+
+    // Update active class on options
+    $$('[data-set-colorway]').forEach(o => {
+      o.classList.toggle('is-active', o.getAttribute('data-set-colorway') === colorway);
+    });
+  });
+
+  const switcherBtn = $('#colorwayToggle');
+  const menu = $('#colorwayMenu');
+  if (switcherBtn && menu) {
+    switcherBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.hidden = !menu.hidden;
+    });
+    document.addEventListener('click', () => {
+      menu.hidden = true;
+    });
+  }
+}
+
+/* -----------------------------
+   Sticky header shadow
+   ----------------------------- */
+function initStickyHeader() {
+  const header = $('#siteHeader');
+  if (!header) return;
+  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 50);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 }
 
 /* -----------------------------
@@ -407,10 +633,9 @@ function initScrollReveal() {
         obs.unobserve(entry.target);
       }
     });
-  }, { rootMargin: '0px 0px -40px 0px', threshold: 0.06 });
+  }, { rootMargin: '0px 0px -30px 0px', threshold: 0.05 });
 
-  // Observe sections + cards
-  $$('.cat-section, .why__item, .offer-card, .product-card, .section-head').forEach(el => {
+  $$('.cat-section, .why__item, .offer-card, .product-card, .section-head, .hero-preview-card').forEach(el => {
     el.classList.add('reveal');
     io.observe(el);
   });
@@ -461,7 +686,6 @@ function initFooterYear() {
 
 /* -----------------------------
    Shop page: filters, sort, results
-   Activated only when shop markup is present.
    ----------------------------- */
 function initShopPage() {
   const root = $('#shopRoot');
@@ -477,12 +701,10 @@ function initShopPage() {
   const search     = $('#shopSearch', root);
   const includeCall = $('#includeCall', root);
 
-  // Compute price bounds from real products (excluding "call for price")
   const priced = PRODUCTS.filter(p => typeof p.price === 'number');
   const minPrice = 0;
   const maxPrice = Math.max(...priced.map(p => p.priceMax || p.price), 1000);
 
-  // Init range UI
   minRange.min = maxRange.min = String(minPrice);
   minRange.max = maxRange.max = String(maxPrice);
   minRange.value = String(minPrice);
@@ -527,23 +749,21 @@ function initShopPage() {
       case 'price-desc': list.sort((a, b) => (b.price ?? -1) - (a.price ?? -1)); break;
       case 'name-asc':   list.sort((a, b) => a.title.localeCompare(b.title)); break;
       case 'name-desc':  list.sort((a, b) => b.title.localeCompare(a.title)); break;
-      default: /* relevance: keep original order */ break;
+      default: break;
     }
 
     if (!list.length) {
       grid.innerHTML = `<div class="shop-empty"><h3>No products match.</h3><p>Try widening your price range or clearing filters.</p></div>`;
     } else {
       grid.innerHTML = list.map(renderCard).join('');
-      // Re-trigger reveal
       $$('.product-card', grid).forEach(c => c.classList.add('is-visible'));
+      initTiltGestures();
     }
     if (countLabel) countLabel.textContent = `${list.length} product${list.length === 1 ? '' : 's'}`;
   }
 
-  // Wire up
   $$('input[name="cat"]', root).forEach(input => {
     input.addEventListener('change', () => {
-      // "all" is exclusive
       if (input.value === 'all' && input.checked) {
         $$('input[name="cat"]', root).forEach(i => { if (i !== input) i.checked = false; });
       } else if (input.checked) {
@@ -572,7 +792,6 @@ function initShopPage() {
     applyFilters();
   });
 
-  // Pre-select category from URL hash, e.g. shop.html#themes
   const hash = window.location.hash.replace('#', '');
   if (hash && CATEGORY_LABELS[hash]) {
     $$('input[name="cat"]', root).forEach(i => i.checked = false);
@@ -582,25 +801,6 @@ function initShopPage() {
 
   applyFilters();
 }
-
-/* -----------------------------
-   Boot
-   ----------------------------- */
-document.addEventListener('DOMContentLoaded', () => {
-  // Render every category that has a grid in the page
-  Object.keys(CATEGORY_LABELS).forEach(renderGrid);
-
-  initStickyHeader();
-  initThemeToggle();
-  initCategoryTabs();
-  initScrollReveal();
-  initMobileNav();
-  initFooterYear();
-  initShopPage();
-
-  // Notify other modules products are rendered
-  document.dispatchEvent(new CustomEvent('titan:products-rendered'));
-});
 
 /* -----------------------------
    Theme Toggle (Dark/Light Mode)
@@ -629,3 +829,25 @@ function initThemeToggle() {
   toggles.forEach(t => t.addEventListener('click', toggle));
   updateUI();
 }
+
+/* -----------------------------
+   Boot
+   ----------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  Object.keys(CATEGORY_LABELS).forEach(renderGrid);
+
+  initStickyHeader();
+  initThemeToggle();
+  initColorwaySwitcher();
+  initCategoryTabs();
+  initTiltGestures();
+  initMagneticButtons();
+  initCursorAura();
+  initQuickPreviewModal();
+  initScrollReveal();
+  initMobileNav();
+  initFooterYear();
+  initShopPage();
+
+  document.dispatchEvent(new CustomEvent('titan:products-rendered'));
+});

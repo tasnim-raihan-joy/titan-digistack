@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0e151e" />
+  <meta name="theme-color" content="#080a14" />
   <meta name="description" content="Titan DigiStack — Premium digital tools, software, AI subscriptions, themes, plugins and eBooks. Officially licensed. Instant delivery." />
   <title>Titan DigiStack — Premium Digital Tools, Software & Subscriptions</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
   <link rel="stylesheet" href="css/style.css" />
@@ -22,11 +22,17 @@
   <script defer src="js/countdown.js"></script>
   <script defer src="js/search.js"></script>
   <script>
-    (function(){const s=localStorage.getItem('titan_theme');if(s==='light'||(!s&&window.matchMedia('(prefers-color-scheme: light)').matches)){document.documentElement.setAttribute('data-theme','light');}})();
+    (function(){
+      const t=localStorage.getItem('titan_theme');
+      if(t==='light'||(!t&&window.matchMedia('(prefers-color-scheme: light)').matches)){document.documentElement.setAttribute('data-theme','light');}
+      const c=localStorage.getItem('titan_colorway');
+      if(c){document.documentElement.setAttribute('data-colorway', c);}
+    })();
   </script>
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to main content</a>
+  <div class="cursor-aura" aria-hidden="true"></div>
 
   <!-- 1. TOP BAR -->
   <div class="top-bar" role="region" aria-label="Site announcement">
@@ -48,12 +54,12 @@
         <svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
           <defs>
             <linearGradient id="brandGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#77D3E5"/>
-              <stop offset="100%" stop-color="#E5779C"/>
+              <stop offset="0%" stop-color="#00F2FE"/>
+              <stop offset="100%" stop-color="#FF007A"/>
             </linearGradient>
           </defs>
           <rect x="2" y="2" width="36" height="36" rx="10" fill="url(#brandGrad)"/>
-          <path d="M12 14h16M20 14v14M14 22h12" stroke="#0e151e" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M12 14h16M20 14v14M14 22h12" stroke="#080a14" stroke-width="2.8" stroke-linecap="round"/>
         </svg>
         <span class="brand__text">
           <strong>Titan</strong><span>DigiStack</span>
@@ -69,6 +75,31 @@
       </form>
 
       <nav class="header-actions" aria-label="Account and cart">
+        <!-- Colorway Preset Selector -->
+        <div class="colorway-switcher">
+          <button class="icon-btn colorway-toggle" id="colorwayToggle" aria-label="Change color palette" title="Change Theme Palette">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 000 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="currentColor"/></svg>
+          </button>
+          <div class="colorway-menu" id="colorwayMenu" hidden>
+            <button type="button" class="colorway-opt" data-set-colorway="aurora">
+              <span class="colorway-dot colorway-dot--aurora"></span>
+              <span>Cyber Aurora</span>
+            </button>
+            <button type="button" class="colorway-opt" data-set-colorway="solar">
+              <span class="colorway-dot colorway-dot--solar"></span>
+              <span>Solar Flare</span>
+            </button>
+            <button type="button" class="colorway-opt" data-set-colorway="matrix">
+              <span class="colorway-dot colorway-dot--matrix"></span>
+              <span>Emerald Matrix</span>
+            </button>
+            <button type="button" class="colorway-opt" data-set-colorway="crystal">
+              <span class="colorway-dot colorway-dot--crystal"></span>
+              <span>Crystal Prism</span>
+            </button>
+          </div>
+        </div>
+
         <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Toggle light/dark theme" title="Toggle theme">
           <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.38.39-1.02 0-1.41zM7.05 18.01l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.02-.39-1.41 0z" fill="currentColor"/></svg>
           <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12.3 2a10 10 0 00-1.9 20 10 10 0 0010.5-12.4 1 1 0 00-1.2-1.2 8 8 0 11-8.6-8.6 1 1 0 00-1.2-1.2z" fill="currentColor"/></svg>
@@ -111,13 +142,13 @@
 
   <main id="main">
 
-    <!-- 3. ASYMMETRIC HERO -->
+    <!-- 3. CHROMATIC ASYMMETRIC HERO -->
     <section class="hero" aria-labelledby="heroTitle">
       <div class="container hero__inner">
         <div class="hero__copy">
-          <span class="eyebrow eyebrow--accent">PREMIER DIGITAL ENGINE</span>
-          <h1 id="heroTitle">Premier Software, AI Tools &amp; Digital Infrastructure</h1>
-          <p class="hero__lead">Curated software tools, official developer licenses, and high-performance AI subscriptions — with instant digital delivery across South Asia.</p>
+          <span class="eyebrow">PREMIER DIGITAL ENGINE</span>
+          <h1 id="heroTitle">Next-Gen Software, <span class="chromatic-gradient-text">AI Tools</span> &amp; Digital Infrastructure</h1>
+          <p class="hero__lead">Curated developer licenses, premier design subscriptions, and high-performance AI engines — with instant automated digital key delivery.</p>
           <div class="hero__cta">
             <a href="#ai" class="btn btn--primary">Explore Stack</a>
             <a href="pages/shop.html" class="btn btn--ghost">Browse Full Catalog</a>
@@ -128,7 +159,7 @@
               <span class="hero__ticker-lbl">Happy Clients</span>
             </div>
             <div class="hero__ticker-item">
-              <span class="hero__ticker-val">200+</span>
+              <span class="hero__ticker-val">129+</span>
               <span class="hero__ticker-lbl">Verified Tools</span>
             </div>
             <div class="hero__ticker-item">
@@ -144,37 +175,43 @@
               <span class="hero-preview-card__tag">TOP AI DEAL</span>
               <span class="badge badge--sale">SALE</span>
             </div>
-            <h3>ChatGPT Plus Subscription</h3>
-            <p style="color: var(--color-text-secondary); font-size: 0.9rem; margin-block: 4px 12px;">Full access to GPT-4o, DALL·E 3 &amp; Advanced Voice Mode</p>
+            <h3>ChatGPT Plus Official</h3>
+            <p style="color: var(--color-text-secondary); font-size: 0.92rem; margin-block: 6px 14px;">Full access to GPT-4o, DALL·E 3 &amp; Advanced Voice Engine</p>
             <div style="display: flex; align-items: center; justify-content: space-between;">
               <span class="hero-preview-card__price">৳350.00 <span style="font-size: 0.78rem; color: var(--color-text-muted); font-weight: 400;">/ mo</span></span>
-              <button type="button" class="btn btn--sm btn--primary" data-add-to-cart data-id="ai-008">Add to Cart</button>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn btn--sm btn--ghost" data-quick-view="ai-008">Preview</button>
+                <button type="button" class="btn btn--sm btn--primary" data-add-to-cart data-id="ai-008">Add</button>
+              </div>
             </div>
           </article>
 
-          <article class="hero-preview-card" style="background: rgba(13, 16, 23, 0.9);">
+          <article class="hero-preview-card">
             <div class="hero-preview-card__head">
               <span class="hero-preview-card__tag">DESIGN SUITE</span>
               <span class="badge badge--free">POPULAR</span>
             </div>
-            <h3>Canva Pro Official</h3>
-            <p style="color: var(--color-text-secondary); font-size: 0.9rem; margin-block: 4px 12px;">Unlimited premium assets, brand kits &amp; background remover</p>
+            <h3>Canva Pro Official License</h3>
+            <p style="color: var(--color-text-secondary); font-size: 0.92rem; margin-block: 6px 14px;">Unlimited premium templates, brand kits &amp; magic background remover</p>
             <div style="display: flex; align-items: center; justify-content: space-between;">
               <span class="hero-preview-card__price">৳60.00</span>
-              <button type="button" class="btn btn--sm btn--ghost" data-add-to-cart data-id="gr-018">Add to Cart</button>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" class="btn btn--sm btn--ghost" data-quick-view="gr-018">Preview</button>
+                <button type="button" class="btn btn--sm btn--primary" data-add-to-cart data-id="gr-018">Add</button>
+              </div>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- 4. OFFER BANNER + COUNTDOWN -->
+    <!-- 4. FLASH OFFER BANNER + COUNTDOWN -->
     <section class="offer-banner" id="offerBanner" aria-labelledby="offerTitle">
       <div class="container offer-banner__inner">
         <div class="offer-banner__copy">
-          <span class="eyebrow eyebrow--accent">LIMITED TIME DROP</span>
-          <h2 id="offerTitle">Mega Tech Flash Sale — Save up to <span class="text-accent">70% Off</span></h2>
-          <p>Instant pricing drops on AI tools, WordPress agency stacks, and creative software. Active until timer runs out.</p>
+          <span class="eyebrow eyebrow--secondary">LIMITED TIME DROP</span>
+          <h2 id="offerTitle">Mega Tech Flash Drop — Save up to <span class="chromatic-gradient-text-sec">70% Off</span></h2>
+          <p>Instant pricing reductions on AI subscriptions, WordPress agency stacks, and creative tools. Valid until timer reaches zero.</p>
           <a href="#ai" class="btn btn--primary">Grab Flash Deal</a>
         </div>
         <div class="countdown" id="countdown" role="timer" aria-live="off" aria-label="Promotion countdown">
@@ -191,15 +228,15 @@
       <div class="container">
         <header class="section-head">
           <span class="eyebrow">ENGINEERING TRUST</span>
-          <h2 id="whyTitle">Why Engineering Teams &amp; Agencies Trust Us</h2>
-          <p>Six pillar guarantees designed for frictionless digital software deployment.</p>
+          <h2 id="whyTitle">Why Developers &amp; Creators Choose Titan</h2>
+          <p>Six pillar guarantees designed for frictionless digital license deployment and reliability.</p>
         </header>
         <ul class="why__grid">
           <li class="why__item">
             <span class="why__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M12 2l9 4v6c0 5-3.5 9.4-9 10-5.5-.6-9-5-9-10V6l9-4z" fill="currentColor"/></svg>
             </span>
-            <h3>100% Verified</h3>
+            <h3>100% Genuine</h3>
             <p>Direct authentic publisher licenses without nulled or modified code.</p>
           </li>
           <li class="why__item">
@@ -220,7 +257,7 @@
             <span class="why__icon" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M21 11.5A8.4 8.4 0 0012.5 3 8.5 8.5 0 004 11.5V17a3 3 0 003 3h1v-7H5.9A6.5 6.5 0 0112.5 5 6.5 6.5 0 0119 11.5h-1v8.5h-3v2h3a2 2 0 002-2v-8.5z" fill="currentColor"/></svg>
             </span>
-            <h3>Direct Tech Support</h3>
+            <h3>Direct Support</h3>
             <p>Dedicated developer &amp; license setup assistance via live chat.</p>
           </li>
           <li class="why__item">
@@ -241,10 +278,11 @@
       </div>
     </section>
 
-    <!-- 6. CATEGORY TAB NAVIGATOR -->
+    <!-- 6. FLOATING CAPSULE DOCK (CATEGORY NAVIGATOR) -->
     <nav class="cat-tabs" id="catTabs" aria-label="Product categories">
       <div class="container">
         <div class="cat-tabs__inner" role="tablist">
+          <div class="cat-tab-indicator" aria-hidden="true"></div>
           <a class="cat-tab is-active" role="tab" href="#ai">AI Tools &amp; Subscriptions</a>
           <a class="cat-tab" role="tab" href="#themes">WordPress Themes</a>
           <a class="cat-tab" role="tab" href="#plugins">WordPress Plugins</a>
@@ -370,14 +408,14 @@
     </section>
 
     <!-- 15. NEWSLETTER -->
-    <section class="section-block" aria-labelledby="newsTitle" style="background: rgba(13, 16, 23, 0.8);">
-      <div class="container" style="max-width: 800px; text-align: center;">
-        <span class="eyebrow eyebrow--accent">INSIDER DROPS</span>
-        <h2 id="newsTitle" style="margin-block: 0.4rem 0.8rem;">Subscribe for Instant License Drops &amp; Discounts</h2>
-        <p style="margin-bottom: 1.8rem;">Join 5,000+ developers and creators getting early access to new digital licenses and exclusive promo codes.</p>
-        <form style="display: flex; gap: 10px; max-width: 500px; margin: 0 auto; flex-wrap: wrap;" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓';">
+    <section class="newsletter" aria-labelledby="newsTitle">
+      <div class="container newsletter__inner" style="max-width: 800px; text-align: center;">
+        <span class="eyebrow">INSIDER DROPS</span>
+        <h2 id="newsTitle">Subscribe for Instant License Drops &amp; Discounts</h2>
+        <p style="margin-bottom: 1.8rem;">Join 10,000+ developers and creators getting early access to new digital licenses and exclusive promo codes.</p>
+        <form class="newsletter__form" style="max-width: 520px; margin: 0 auto;" onsubmit="event.preventDefault(); this.querySelector('button').textContent='Subscribed ✓';">
           <label for="newsEmail" class="visually-hidden">Email address</label>
-          <input id="newsEmail" type="email" required placeholder="you@example.com" style="flex: 1; min-width: 220px; background: rgba(19, 23, 34, 0.9); border: 1px solid var(--color-border); padding: 12px 16px; border-radius: var(--border-radius-sm); color: var(--color-text-primary);" />
+          <input id="newsEmail" type="email" required placeholder="Enter your developer or creator email..." />
           <button type="submit" class="btn btn--primary">Subscribe</button>
         </form>
       </div>
@@ -391,11 +429,11 @@
         <a href="index.html" class="brand brand--footer" aria-label="Titan DigiStack home">
           <svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
             <rect x="2" y="2" width="36" height="36" rx="10" fill="url(#brandGrad)"/>
-            <path d="M12 14h16M20 14v14M14 22h12" stroke="#0e151e" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M12 14h16M20 14v14M14 22h12" stroke="#080a14" stroke-width="2.8" stroke-linecap="round"/>
           </svg>
           <span class="brand__text"><strong>Titan</strong><span>DigiStack</span></span>
         </a>
-        <p style="margin-top: 14px; color: var(--color-text-secondary); max-width: 40ch; font-size: 0.9rem;">
+        <p class="site-footer__about">
           South Asia's trusted engine for premium digital tools, verified licenses, and AI infrastructure. Instant delivery, encrypted checkout.
         </p>
       </div>
@@ -436,7 +474,7 @@
     <div class="footer-bottom">
       <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
         <p>© <span id="year"></span> Titan DigiStack. All rights reserved.</p>
-        <p class="mono-tag" style="color: var(--color-accent-primary);">● SYSTEM STATUS: ONLINE</p>
+        <p class="mono-tag" style="color: var(--color-accent-emerald); font-weight: 700;">● SYSTEM STATUS: 100% OPERATIONAL</p>
       </div>
     </div>
   </footer>
@@ -465,4 +503,3 @@
   </nav>
 </body>
 </html>
-
