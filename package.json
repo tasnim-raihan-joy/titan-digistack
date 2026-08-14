@@ -1,0 +1,23 @@
+{
+  "name": "titan-digistack",
+  "version": "1.0.0",
+  "description": "A fully hand-coded digital marketplace storefront. No CMS, no page builder, no JS frameworks, no CSS frameworks. Just HTML5, CSS3, and vanilla ES6+.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tasnim-raihan-joy/titan-digistack.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tasnim-raihan-joy/titan-digistack/issues"
+  },
+  "homepage": "https://github.com/tasnim-raihan-joy/titan-digistack#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0"
+  }
+}

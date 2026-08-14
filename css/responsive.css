@@ -74,7 +74,26 @@
 }
 
 /* Very small screens */
+@media (max-width: 480px) {
+  .brand {
+    gap: 8px;
+  }
+  .brand__mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+  .brand__text strong {
+    font-size: 1.05rem;
+  }
+  .brand__text span {
+    font-size: 0.95rem;
+  }
+}
+
 @media (max-width: 380px) {
   .top-bar__meta { display: none; }
   .countdown__cell { padding: 10px 6px; }
+  .brand__text span { display: none; }
 }
+
