@@ -73,8 +73,12 @@
   .hamburger { display: none; }
 }
 
-/* Very small screens */
 @media (max-width: 480px) {
+  .hero__title-container {
+    padding: 2px;
+    border-radius: 12px;
+    margin-block: 0.3rem 1rem;
+  }
   .brand {
     gap: 8px;
   }
@@ -83,17 +87,15 @@
     height: 32px;
     border-radius: 8px;
   }
-  .brand__text strong {
-    font-size: 1.05rem;
-  }
-  .brand__text span {
-    font-size: 0.95rem;
+  .brand__text-img {
+    height: 26px;
+    max-width: 140px;
   }
 }
 
 @media (max-width: 380px) {
   .top-bar__meta { display: none; }
   .countdown__cell { padding: 10px 6px; }
-  .brand__text span { display: none; }
+  .brand__text-img { height: 22px; max-width: 110px; }
 }
 
