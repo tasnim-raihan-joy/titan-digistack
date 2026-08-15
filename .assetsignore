@@ -1,0 +1,27 @@
+# Node dependencies & binaries
+node_modules/
+node_modules/**
+
+# Version control & CI/CD
+.git/
+.github/
+
+# AI agents & system configs
+.agents/
+
+# Test suites & Playwright configs
+tests/
+test-results/
+playwright-report/
+playwright.config.js
+package.json
+package-lock.json
+
+# Archive bundles & temporary artifacts
+*.zip
+*.tar.gz
+*.log
+
+# OS metadata
+.DS_Store
+Thumbs.db
