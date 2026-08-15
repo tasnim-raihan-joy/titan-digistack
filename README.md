@@ -3,6 +3,7 @@
 A fully hand-coded digital marketplace storefront. No CMS, no page builder, no JS frameworks, no CSS frameworks. Just HTML5, CSS3, and vanilla ES6+.
 
 Stack:
+
 - HTML5 with semantic landmarks
 - CSS3 (custom properties, Grid, Flexbox)
 - Vanilla JavaScript (modules split by concern, no build step)
@@ -12,7 +13,7 @@ Stack:
 
 ## File structure
 
-```
+```text
 titan-digistack/
 ├── index.html              # Homepage with all 8 category sections
 ├── css/
@@ -43,7 +44,8 @@ It's a static site. Two options:
 
 1. **Just open `index.html`** in any modern browser. Cart persistence, search, and the countdown all work from the file system.
 2. **Local server** (recommended for clean URLs and to avoid edge cases):
-   ```
+
+   ```bash
    npx serve .
    # or
    python -m http.server 8080
@@ -92,14 +94,14 @@ const PRODUCTS = [
 
 Field reference:
 
-| Field      | Type             | Required | Notes |
-|------------|------------------|----------|-------|
-| `id`       | string           | yes      | Unique. Used as cart key. |
-| `title`    | string           | yes      | Displayed on the card. |
-| `price`    | number ⏐ `null`  | yes      | BDT amount. Use `0` for "Free". Use `null` for "Call for Price". |
-| `priceMax` | number           | no       | Renders `৳450–৳750` style price ranges. |
-| `badge`    | string           | no       | One of: `'new'`, `'sale'`, `'free'`, `'call'`. |
-| `category` | string           | yes      | One of: `themes`, `plugins`, `graphic`, `ai`, `software`, `tutorials`, `services`, `ebooks`. |
+| Field      | Type               | Required | Notes                                                                                        |
+| ---------- | ------------------ | -------- | -------------------------------------------------------------------------------------------- |
+| `id`       | string             | yes      | Unique. Used as cart key.                                                                    |
+| `title`    | string             | yes      | Displayed on the card.                                                                       |
+| `price`    | `number` / `null`  | yes      | BDT amount. Use `0` for "Free". Use `null` for "Call for Price".                             |
+| `priceMax` | number             | no       | Renders `৳450–৳750` style price ranges.                                                      |
+| `badge`    | string             | no       | One of: `'new'`, `'sale'`, `'free'`, `'call'`.                                               |
+| `category` | string             | yes      | One of: `themes`, `plugins`, `graphic`, `ai`, `software`, `tutorials`, `services`, `ebooks`. |
 
 Add a product → save → reload. The homepage grid, search dropdown, and shop page all pick it up automatically.
 
@@ -109,7 +111,7 @@ Drop image files into `assets/products/` named after the product `id`.
 The site auto-detects them and tries **three extensions in order: `.png` → `.jpg` → `.webp`**.
 You can mix formats freely — just use the product ID as the filename.
 
-```
+```text
 assets/products/th-005.png    ← appears on the "Astra Pro WP Theme" card
 assets/products/gr-018.jpg    ← "Canva Pro" — JPG is fine, picked up automatically
 assets/products/ai-008.webp   ← "ChatGPT Plus" — WebP also works
@@ -118,15 +120,17 @@ assets/products/ai-008.webp   ← "ChatGPT Plus" — WebP also works
 No config changes needed. Missing files fall back through the chain silently, then
 land on the gradient placeholder. No broken-image icons, no console errors.
 
-**Extension fallback order**
+#### Extension fallback order
 
 `png` → `jpg` → `webp`
 
 Each request only fires after the previous one fails, so only one network request
 goes out for found images. The chain is defined in `main.js`:
+
 ```js
 window.IMAGE_EXTS = ['png', 'jpg', 'webp'];
 ```
+
 Change the order or add more extensions there if you need to.
 
 **Recommended spec:** 480 × 580 px (matches the locked 240 × 290 card at 2× Retina).
@@ -189,7 +193,7 @@ The site is fully static. Pick any host:
 
 ### Vercel
 
-```
+```bash
 npx vercel
 ```
 

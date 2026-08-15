@@ -4,7 +4,7 @@ Drop image files here named after the product `id`.
 The site tries **three extensions automatically: `.png` then `.jpg` then `.webp`**.
 You can mix formats freely — just use the product ID as the filename stem.
 
-```
+```text
 th-005.png     <- tried first for "Astra Pro WP Theme"
 gr-018.jpg     <- fine; site tries .png (404), then .jpg (found)
 ai-008.webp    <- fine; site tries .png (404), .jpg (404), then .webp (found)
@@ -34,6 +34,7 @@ For transparent logos set `imageFit: 'contain'` on that product in `js/main.js`:
 ```
 
 **Change the extension order** (edit `js/main.js`):
+
 ```js
 window.IMAGE_EXTS = ['png', 'jpg', 'webp'];  // change order or add extensions here
 ```
@@ -46,6 +47,7 @@ Copy this list as a checklist while you collect artwork. Each line is one
 expected file. Tick them off as you drop images in.
 
 ### WordPress Themes — 15
+
 - [ ] th-001.png — Digital Product Selling Website Template
 - [ ] th-002.png — KitNinja – Ultimate Ecommerce Template
 - [ ] th-003.png — 100+ Bangla Landing Page Templates
@@ -63,6 +65,7 @@ expected file. Tick them off as you drop images in.
 - [ ] th-015.png — Woostify Theme Lifetime
 
 ### WordPress Plugins — 30
+
 - [ ] pl-001.png — ACF Pro
 - [ ] pl-002.png — All-in-One WP Migration Unlimited
 - [ ] pl-003.png — bKash Sandbox API Test Plugin
@@ -95,6 +98,7 @@ expected file. Tick them off as you drop images in.
 - [ ] pl-030.png — WP Funnels Pro
 
 ### Graphic Tools — 20
+
 - [ ] gr-001.png — 20,000+ PSD & CDR Flyer Templates
 - [ ] gr-002.png — Freepik Official Subscription
 - [ ] gr-003.png — Runway ML Subscription
@@ -117,6 +121,7 @@ expected file. Tick them off as you drop images in.
 - [ ] gr-020.png — Adobe Master Collection 2024
 
 ### AI Tools & Subscriptions — 30
+
 - [ ] ai-001.png — Higgsfield AI – Video & Image Generator
 - [ ] ai-002.png — Beautiful AI
 - [ ] ai-003.png — Bolt AI Builder
@@ -149,6 +154,7 @@ expected file. Tick them off as you drop images in.
 - [ ] ai-030.png — Gumloop AI Automation
 
 ### Software & Apps — 12
+
 - [ ] sw-001.png — Truecaller Premium (Android & iOS)
 - [ ] sw-002.png — Microsoft Office Professional 2019/2021/2024
 - [ ] sw-003.png — Microsoft Office Professional 2010/2013/2016
@@ -163,6 +169,7 @@ expected file. Tick them off as you drop images in.
 - [ ] sw-012.png — 100+ Premium Android Apps Bundle
 
 ### Tutorials — 6
+
 - [ ] tu-001.png — Visa Processing Course
 - [ ] tu-002.png — Advance Logo Design in Adobe Illustrator
 - [ ] tu-003.png — Advance Web Development with PHP & Laravel
@@ -171,6 +178,7 @@ expected file. Tick them off as you drop images in.
 - [ ] tu-006.png — AI Image Generator Tutorial by UY Lab
 
 ### Digital Services — 6
+
 - [ ] sv-001.png — Facebook BIN Number
 - [ ] sv-002.png — Facebook Page Likes, Share & Comment Service
 - [ ] sv-003.png — YouTube Services – Subscribers, Likes, Watch Time
@@ -179,6 +187,7 @@ expected file. Tick them off as you drop images in.
 - [ ] sv-006.png — Facebook Page Review
 
 ### eBooks & Entertainment — 10
+
 - [ ] eb-001.png — 1400+ ChatGPT Prompts Library
 - [ ] eb-002.png — Gora Theke Digital Marketing
 - [ ] eb-003.png — Uddoktader Prothom Thikana eBook
